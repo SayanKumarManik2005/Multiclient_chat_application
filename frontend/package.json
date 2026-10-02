@@ -1,0 +1,12 @@
+{
+  "name": "securechat-frontend",
+  "version": "1.0.0",
+  "description": "SecureChat — static frontend (served on port 5500)",
+  "scripts": {
+    "start": "http-server . -p 5500 --cors -o -c-1",
+    "serve": "npx serve . -l 5500"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

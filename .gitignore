@@ -1,0 +1,26 @@
+# ─── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.*.local
+
+# ─── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+
+# ─── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+logs/
+
+# ─── Runtime / OS ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.tmp
+
+# ─── Data (chat history — do not commit user messages) ─────────────────────────
+backend/data/messages.json
+
+# ─── Editor ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/

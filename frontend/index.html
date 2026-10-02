@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureChat · Multi-Client</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══════════════════  LOGIN SCREEN  ═══════════════════ -->
+<div id="login-screen">
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="logo-ring"><span class="logo-icon">💬</span></div>
+            <h1>SecureChat</h1>
+            <p>Real-time · AI-moderated · Private</p>
+        </div>
+        <div class="login-form">
+            <div class="input-group">
+                <label for="username">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                    Username
+                </label>
+                <input type="text" id="username" placeholder="Choose a display name" autocomplete="off" maxlength="20">
+            </div>
+            <div class="input-group">
+                <label for="room">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Room
+                </label>
+                <input type="text" id="room" placeholder="Enter room name (e.g. General)" autocomplete="off" maxlength="30">
+            </div>
+            <button id="join-btn" class="btn-primary">
+                Enter Chat
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+        <div class="login-features">
+            <span>🛡️ Regex filter</span>
+            <span>🤖 AI moderation</span>
+            <span>🔒 Private DMs</span>
+            <span>📁 Disk storage</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════  CHAT SCREEN  ════════════════════ -->
+<div id="chat-screen" class="hidden">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <span>💬</span>
+                <span class="brand-name">SecureChat</span>
+            </div>
+            <button id="leave-btn" class="btn-icon-leave" title="Leave room">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+        </div>
+
+        <!-- Room + user info -->
+        <div class="sidebar-info">
+            <div class="info-chip room-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <div>
+                    <span class="chip-label">ROOM</span>
+                    <span class="chip-value" id="room-badge">—</span>
+                </div>
+            </div>
+            <div class="info-chip user-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <div>
+                    <span class="chip-label">YOU</span>
+                    <span class="chip-value" id="user-badge">—</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- ── ROOM MEMBERS ── -->
+        <div class="members-panel">
+            <div class="panel-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Online Members
+                <span id="member-count" class="member-count-badge">0</span>
+            </div>
+            <div id="members-list" class="members-list">
+                <!-- populated by JS -->
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- ── DM Panel ── -->
+        <div class="dm-panel">
+            <div class="panel-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Direct Message
+            </div>
+            <input type="text" id="dm-user" class="sidebar-input" placeholder="Target username" maxlength="20">
+            <textarea id="dm-message" class="sidebar-textarea" placeholder="Private message…" rows="3" maxlength="500"></textarea>
+            
+            <div style="display: flex; gap: 8px; margin-top: 2px;">
+                <label id="dm-upload-trigger" class="upload-trigger" style="height: 38px; width: 38px;" title="Attach file to DM">
+                    <input type="file" id="dm-file-input" accept="image/*,video/*" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </label>
+                <button id="dm-btn" class="btn-dm" style="flex: 1; padding: 0;">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    Send Private
+                </button>
+            </div>
+            <div id="dm-file-preview" class="hidden" style="font-size: 0.75rem; color: var(--accent); margin-top: 4px; display: flex; align-items: center; justify-content: space-between;">
+                <span id="dm-preview-name" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                <button id="dm-preview-clear" style="background: none; border: none; color: var(--danger); cursor: pointer; font-weight: bold;">✕</button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="shield-status">
+                <span class="shield-dot"></span>
+                AI Moderation Active
+            </div>
+        </div>
+    </aside>
+
+    <!-- ── Main chat panel ── -->
+    <main class="chat-main">
+
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="header-left">
+                <span class="header-hash">#</span>
+                <span id="header-room-name" class="header-room-name">room</span>
+                <span class="header-badge online-badge">● Live</span>
+            </div>
+            <div class="header-right">
+                <span class="header-badge ai-badge">🛡️ Protected</span>
+            </div>
+        </header>
+
+        <!-- Messages -->
+        <div id="chat-box" class="chat-box">
+            <div class="chat-welcome">
+                <div class="welcome-icon">👋</div>
+                <p>Start the conversation! This room is AI-moderated.</p>
+            </div>
+        </div>
+
+        <!-- Drop zone overlay (shown on drag) -->
+        <div id="upload-drop-zone" class="upload-drop-zone hidden">
+            <div class="drop-zone-inner">
+                <div class="drop-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <p class="drop-text">Drop image or video here</p>
+                <p class="drop-sub">Any size · stored on disk</p>
+            </div>
+        </div>
+
+        <!-- File preview panel (after selection) -->
+        <div id="file-preview-panel" class="file-preview-panel hidden">
+            <div class="preview-header">
+                <span id="preview-type-icon">📷</span>
+                <span id="preview-header-label">Ready to send</span>
+                <button id="preview-clear-btn" class="btn-preview-clear" title="Remove">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="preview-body">
+                <!-- image preview -->
+                <div id="img-preview-wrap" class="preview-thumb-wrap hidden">
+                    <img id="preview-thumb" src="" alt="preview">
+                    <button id="preview-zoom-btn" class="preview-zoom-btn" title="View full size">🔍</button>
+                </div>
+                <!-- video preview -->
+                <div id="vid-preview-wrap" class="preview-vid-wrap hidden">
+                    <video id="preview-video" controls preload="metadata"></video>
+                </div>
+                <!-- meta -->
+                <div class="preview-meta">
+                    <div class="preview-filename" id="preview-filename">—</div>
+                    <div class="preview-filesize" id="preview-filesize">—</div>
+                    <div class="preview-dims" id="preview-dims">—</div>
+                </div>
+            </div>
+            <!-- Upload progress bar -->
+            <div id="upload-progress-wrap" class="upload-progress-wrap hidden">
+                <div class="progress-track">
+                    <div id="upload-progress-bar" class="progress-bar"></div>
+                </div>
+                <span id="upload-progress-label" class="progress-label">Uploading…</span>
+            </div>
+        </div>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox hidden">
+            <button id="lightbox-close" class="lightbox-close">✕</button>
+            <img id="lightbox-img" src="" alt="Full size">
+        </div>
+
+        <!-- Input bar -->
+        <footer class="chat-footer">
+            <label id="upload-trigger" class="upload-trigger" title="Attach image or video">
+                <input type="file" id="file-input" accept="image/*,video/*" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+            </label>
+            <input type="text" id="message-input" class="message-input"
+                   placeholder="Type a message… (Enter to send)" autocomplete="off" maxlength="1000">
+            <button id="send-btn" class="btn-send" title="Send">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </footer>
+
+    </main>
+</div>
+
+<script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+<script src="client.js"></script>
+</body>
+</html>
